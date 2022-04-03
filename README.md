@@ -1,8 +1,8 @@
+# Human-OpenCV
 <p align = "center">
   <img src = "Assets\Test\example.jpg" size = 100>
 </p>
 
-# Human-OpenCV
 **OpenCV** Human Detection Based on **COCO Dataset**. <br>
 The project counts the number of humans of each side of the frame (Left & Right), which could be used for input emulation based on positions of the humans ; similar to a voting system of which input should be emulated.
 
@@ -21,13 +21,11 @@ The project counts the number of humans of each side of the frame (Left & Right)
    >- Download the project
    >- Drag all files into a folder
 
-<br>
 
 2. ### **Install Virtual Environment** (venv) [**Optional**]
    >- Open CMD
    >- Type into CMD: >> **pip install virtualenv**
 
-<br>
 
 3. ### **Setup Virtual Environment** (venv)
    >- Open CMD
@@ -36,12 +34,10 @@ The project counts the number of humans of each side of the frame (Left & Right)
    >- Replace (name) with your desired Virtual Environment Name
    >- **Activation**: Type into CMD: >> **.\(name)\Scripts\activate**
 
-<br>
 
 4. ### **Install OpenCV**
    >- Ensure you have activated your Virtual Environment (prev step) [optional]
    >- Type into Terminal/CMD: >> **pip install opencv-python**
    >- Done! 🏁
 
-<br>
 
