@@ -6,7 +6,7 @@ import cv2 as cv
 from time import time
 
 # // OpenCV bbox Settings ⚙
-threshold = 0.55
+threshold = 0.65
 font = cv.FONT_HERSHEY_SIMPLEX
 font_scale = 0.6
 thickness = 2
@@ -36,6 +36,7 @@ print(f">> Loaded {len(lables)} classes...")
 # VideoCapture(addr)    : addr = Path to Video File
 video = cv.VideoCapture(0)
 
+
 ## Webcam Settings
 video.set(cv.CAP_PROP_FRAME_WIDTH, 1280)
 video.set(cv.CAP_PROP_FRAME_HEIGHT, 720)
@@ -50,7 +51,11 @@ if not video.isOpened():
 looptime = time() # Time Bookmark
 while True:
     count = 0
+    left_count = 0
+    right_count = 0
     ret,frame = video.read()
+    frame = cv.flip(frame,1)
+    roi_left = frame[0:1280, 0:640]
     classIndex, confidence, bbox = model.detect(frame, threshold)
 
     # print(classIndex)
@@ -58,16 +63,24 @@ while True:
         for classIndex, confidence, bbox in zip(classIndex.flatten(), confidence.flatten(), bbox):
             if (classIndex <= 80):
                 if(lables[classIndex-1] == 'person'):                                                           # Filter so it displays only People
-                    count +=1 
+                    count +=1
                     cv.rectangle(frame, bbox, (255,169,0), thickness)                                           # Draw Bounding Box
                     cv.putText(frame, lables[classIndex-1], (bbox[0], bbox[1]), font, font_scale, colour, 1)    # Draw Labels
 
+    L_classIndex, L_confidence, L_bbox = model.detect(roi_left, threshold)
+    if(len(L_classIndex) != 0):
+        for L_classIndex, L_confidence, L_bbox in zip(L_classIndex.flatten(), L_confidence.flatten(), L_bbox):
+            if (L_classIndex <= 80):
+                    left_count +=1
+
     # FPS Calculation & output
-    print("No of people: {count} | FPS: {fps}".format(count=count, fps=(1/(time() - looptime))))
+    print("No. of people: {count} | Left No:{left_count} | Right No.(Est): {right_count}  | FPS: {fps}".format(count= count, left_count = left_count, right_count = count-left_count ,fps=(1/(time() - looptime))))
     looptime = time()
     
     # Display OpenCV Video Result
+    frame = cv.line(frame,(640,0),(640,1000),(255,255,255),7)
     cv.imshow('Human Detection', frame)
+    # cv.imshow('ROI Left',roi_left)
 
     # Exit on 'ESC' Key
     if cv.waitKey(1) == 27: 
