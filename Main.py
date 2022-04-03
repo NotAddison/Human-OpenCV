@@ -1,12 +1,15 @@
 # Made By Addison Chua (https://github.com/NotAddison)
+# SideNote : Not using CUDA because MAC doesn't have dedicated GPUs (?) :: windows superiority 
 
 # Modules (OpenCV, time (FPS))
-# SideNote : Not using CUDA because MAC doesn't have dedicated GPUs (?) :: windows superiority 
 import cv2 as cv 
 from time import time
 
-# // OpenCV bbox Settings ⚙
-threshold = 0.65
+# --- ⚙ OpenCV bbox Settings ⚙ ---
+threshold = 0.55        # Main threshold for obj detection [aka, sensitivity]
+Left_threshold = 0.65   # Left_threshold should be higher than main, more accurate detection of num of people on the left
+toMirror = True         # Mirrors the projected frames (Use True if you're using a webcam & Left and right are mirrored)
+
 font = cv.FONT_HERSHEY_SIMPLEX
 font_scale = 0.6
 thickness = 2
@@ -36,7 +39,6 @@ print(f">> Loaded {len(lables)} classes...")
 # VideoCapture(addr)    : addr = Path to Video File
 video = cv.VideoCapture(0)
 
-
 ## Webcam Settings
 video.set(cv.CAP_PROP_FRAME_WIDTH, 1280)
 video.set(cv.CAP_PROP_FRAME_HEIGHT, 720)
@@ -54,7 +56,10 @@ while True:
     left_count = 0
     right_count = 0
     ret,frame = video.read()
-    frame = cv.flip(frame,1)
+
+    if(toMirror):
+        frame = cv.flip(frame, 1)
+
     roi_left = frame[0:1280, 0:640]
     classIndex, confidence, bbox = model.detect(frame, threshold)
 
@@ -67,7 +72,7 @@ while True:
                     cv.rectangle(frame, bbox, (255,169,0), thickness)                                           # Draw Bounding Box
                     cv.putText(frame, lables[classIndex-1], (bbox[0], bbox[1]), font, font_scale, colour, 1)    # Draw Labels
 
-    L_classIndex, L_confidence, L_bbox = model.detect(roi_left, threshold)
+    L_classIndex, L_confidence, L_bbox = model.detect(roi_left, Left_threshold)
     if(len(L_classIndex) != 0):
         for L_classIndex, L_confidence, L_bbox in zip(L_classIndex.flatten(), L_confidence.flatten(), L_bbox):
             if (L_classIndex <= 80):
