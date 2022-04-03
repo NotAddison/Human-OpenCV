@@ -5,7 +5,6 @@
 import cv2 as cv 
 from time import time
 
-
 # // OpenCV bbox Settings ⚙
 threshold = 0.55
 font = cv.FONT_HERSHEY_SIMPLEX
@@ -35,7 +34,11 @@ print(f">> Loaded {len(lables)} classes...")
 # VideoCapture(0)       : 0 = Default Camera
 # VideoCapture(1)       : 1 = External Camera
 # VideoCapture(addr)    : addr = Path to Video File
-video = cv.VideoCapture(r'Assets\Test\Footage of People Walking _ Free Stock Footage (1080p).mp4')
+video = cv.VideoCapture(0)
+
+## Webcam Settings
+video.set(cv.CAP_PROP_FRAME_WIDTH, 1280)
+video.set(cv.CAP_PROP_FRAME_HEIGHT, 720)
 
 ## Checks if camera opened successfully
 if not video.isOpened():
