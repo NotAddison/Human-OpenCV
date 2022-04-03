@@ -1,3 +1,5 @@
+# Made By Addison Chua (https://github.com/NotAddison)
+
 # Modules (OpenCV, time (FPS))
 # SideNote : Not using CUDA because MAC doesn't have dedicated GPUs (?) :: windows superiority 
 import cv2 as cv 
@@ -52,10 +54,10 @@ while True:
     if(len(classIndex) != 0):
         for classIndex, confidence, bbox in zip(classIndex.flatten(), confidence.flatten(), bbox):
             if (classIndex <= 80):
-                if(lables[classIndex-1] == 'person'):   # Filter so it displays only People
+                if(lables[classIndex-1] == 'person'):                                                           # Filter so it displays only People
                     count +=1 
-                    cv.rectangle(frame, bbox, (255,169,0), thickness)
-                    cv.putText(frame, lables[classIndex-1], (bbox[0], bbox[1]), font, font_scale, colour, 1)
+                    cv.rectangle(frame, bbox, (255,169,0), thickness)                                           # Draw Bounding Box
+                    cv.putText(frame, lables[classIndex-1], (bbox[0], bbox[1]), font, font_scale, colour, 1)    # Draw Labels
 
     # FPS Calculation & output
     print("No of people: {count} | FPS: {fps}".format(count=count, fps=(1/(time() - looptime))))
