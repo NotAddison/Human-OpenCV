@@ -9,7 +9,7 @@ from time import time
 threshold = 0.55        # Main threshold for obj detection [aka, sensitivity]
 Left_threshold = 0.65   # Left_threshold should be higher than main, more accurate detection of num of people on the left
 toMirror = True         # Mirrors the projected frames (Use True if you're using a webcam & Left and right are mirrored)
-center_offset = 200     # Offset for center dot (Note To Self: Need to fix for better accuracy)
+center_offset = 100     # Offset for center dot (Note To Self: Need to fix for better accuracy) [100 if close : 200 if far]
 
 font = cv.FONT_HERSHEY_SIMPLEX
 font_scale = 0.6
