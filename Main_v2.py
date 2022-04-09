@@ -7,14 +7,19 @@ from time import time
 
 # --- ⚙ OpenCV bbox Settings ⚙ ---
 threshold = 0.55        # Main threshold for obj detection [aka, sensitivity]
-Left_threshold = 0.65   # Left_threshold should be higher than main, more accurate detection of num of people on the left
 toMirror = True         # Mirrors the projected frames (Use True if you're using a webcam & Left and right are mirrored)
 center_offset = 100     # Offset for center dot (Note To Self: Need to fix for better accuracy) [100 if close : 200 if far]
 
 font = cv.FONT_HERSHEY_SIMPLEX
 font_scale = 0.6
 thickness = 2
-colour = (0,255,0)
+bbox_color = (255,169,0)
+text_colour = (0,255,0)
+
+debug = True;                   # Show debugging stats
+debug_fontScale  = 0.5           # Show debugging stats
+debug_thickness = 1;            # Thickness of debugging text
+debug_Colour = (77, 40, 225)    # Colour of debugging text
 
 # Load Dependency Files
 config = r'Assets\Dependencies\coco-config.pbtxt'
@@ -71,8 +76,8 @@ while True:
             if (classIndex <= 80):
                 if(lables[classIndex-1] == 'person'):                                                           # Filter so it displays only People
                     count +=1
-                    cv.rectangle(frame, bbox, (255,169,0), thickness)                                           # Draw Bounding Box
-                    cv.putText(frame, lables[classIndex-1], (bbox[0], bbox[1]), font, font_scale, colour, 1)    # Draw Labels
+                    cv.rectangle(frame, bbox, bbox_color, thickness)                                           # Draw Bounding Box
+                    cv.putText(frame, lables[classIndex-1], (bbox[0], bbox[1]), font, font_scale, text_colour, 1)    # Draw Labels
 
                     # Bbox Tracking postiton (Using center point of Bbox)
                     # 0-> left top corner, 1-> left bottom corner, 2-> right bottom corner, 3-> right top corner
@@ -89,16 +94,21 @@ while True:
                     else:
                         left_count += 1
 
-
     # FPS Calculation & output
-    print("No. of people: {count} | Left No:{left_count} | Right No.(Est): {right_count}  | FPS: {fps}".format(count= count, left_count = left_count, right_count = count-left_count ,fps=(1/(time() - looptime))))
+    fps = (1/(time() - looptime))
     looptime = time()
-    
+
     # Display OpenCV Video Result
     frame = cv.line(frame,(640,0),(640,1000),(255,255,255),7)
-    cv.imshow('Human Detection', frame)
-    # cv.imshow('ROI Left',roi_left)
-
+    if(debug):
+        frame = cv.putText(frame, 'Human Detection Demo', (20,610), font, font_scale, debug_Colour, 1, cv.LINE_AA)                  # Display Project Name
+        frame = cv.putText(frame, f'FPS: {fps}', (20,640), font, debug_fontScale, debug_Colour, 1, cv.LINE_AA)                      # Display FPS Count
+        frame = cv.putText(frame, f'Left Count: {left_count}', (20,670), font, debug_fontScale, debug_Colour, 1, cv.LINE_AA)        # Display Left Count
+        frame = cv.putText(frame, f'Right Count: {right_count}', (20,700), font, debug_fontScale, debug_Colour, 1, cv.LINE_AA)      # Display Right Count
+        frame = cv.putText(frame, f'Timer: Xs', (1130,700), font, debug_fontScale, debug_Colour, 1, cv.LINE_AA)                     # Display Timer
+    cv.imshow(f'Human Detection [Demo]', frame)
+    
+    
     # Exit on 'ESC' Key
     if cv.waitKey(1) == 27: 
         break 
