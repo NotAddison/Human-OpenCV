@@ -5,7 +5,7 @@
 import cv2 as cv 
 from time import time
 
-# --- ⚙ OpenCV bbox Settings ⚙ ---
+# --- ⚙ OpenCV Settings ⚙ ---
 threshold = 0.55        # Main threshold for obj detection [aka, sensitivity]
 toMirror = True         # Mirrors the projected frames (Use True if you're using a webcam & Left and right are mirrored)
 center_offset = 100     # Offset for center dot (Note To Self: Need to fix for better accuracy) [100 if close : 200 if far]
@@ -16,8 +16,13 @@ thickness = 2
 bbox_color = (255,169,0)
 text_colour = (0,255,0)
 
-debug = True;                   # Show debugging stats
-debug_fontScale  = 0.5           # Show debugging stats
+header = False;                 # Display Header Toggle
+header_scale = 1                # Header Font Scale
+header_thickness = 2            # Header Font Thickness
+header_color = (255,255,255)    # Header Font Color
+
+debug = True;                  # Show debugging stats
+debug_fontScale  = 0.5          # Show debugging stats
 debug_thickness = 1;            # Thickness of debugging text
 debug_Colour = (77, 40, 225)    # Colour of debugging text
 
@@ -74,10 +79,10 @@ while True:
     if(len(classIndex) != 0):
         for classIndex, confidence, bbox in zip(classIndex.flatten(), confidence.flatten(), bbox):
             if (classIndex <= 80):
-                if(lables[classIndex-1] == 'person'):                                                           # Filter so it displays only People
+                if(lables[classIndex-1] == 'person'):                                                               # Filter so it displays only People
                     count +=1
-                    cv.rectangle(frame, bbox, bbox_color, thickness)                                           # Draw Bounding Box
-                    cv.putText(frame, lables[classIndex-1], (bbox[0], bbox[1]), font, font_scale, text_colour, 1)    # Draw Labels
+                    cv.rectangle(frame, bbox, bbox_color, thickness)                                                # Draw Bounding Box
+                    cv.putText(frame, lables[classIndex-1], (bbox[0], bbox[1]), font, font_scale, text_colour, 1)   # Draw Labels
 
                     # Bbox Tracking postiton (Using center point of Bbox)
                     # 0-> left top corner, 1-> left bottom corner, 2-> right bottom corner, 3-> right top corner
@@ -99,9 +104,15 @@ while True:
     looptime = time()
 
     # Display OpenCV Video Result
-    frame = cv.line(frame,(640,0),(640,1000),(255,255,255),7)
-    if(debug):
+    frame = cv.line(frame,(640,0),(640,1000),(255,255,255),7)   # Draw Center Line
+    
+    if(header):                                                                                                                     # Toggle Headers
+        frame = cv.putText(frame, 'Header_1', (220,60), font, header_scale, header_color, header_thickness, cv.LINE_AA)             # Display Left Header
+        frame = cv.putText(frame, 'Header_2', (920,60), font, header_scale, header_color, header_thickness, cv.LINE_AA)             # Display Right Header
+        
+    if(debug):                                                                                                                      # Toggle Debug
         frame = cv.putText(frame, 'Human Detection Demo', (20,610), font, font_scale, debug_Colour, 1, cv.LINE_AA)                  # Display Project Name
+        frame = cv.putText(frame, 'Human Detection Demo', (20,610), font, font_scale, debug_Colour, 1, cv.LINE_AA)                  # Display Project Name (Duplicated for opacity bold)
         frame = cv.putText(frame, f'FPS: {fps}', (20,640), font, debug_fontScale, debug_Colour, 1, cv.LINE_AA)                      # Display FPS Count
         frame = cv.putText(frame, f'Left Count: {left_count}', (20,670), font, debug_fontScale, debug_Colour, 1, cv.LINE_AA)        # Display Left Count
         frame = cv.putText(frame, f'Right Count: {right_count}', (20,700), font, debug_fontScale, debug_Colour, 1, cv.LINE_AA)      # Display Right Count
